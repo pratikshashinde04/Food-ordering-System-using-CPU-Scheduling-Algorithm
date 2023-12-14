@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        background-color: black;
+    }
+    
+    .container {
+        max-width: 750px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    h1 {
+        font-size: 24px;
+    }
+    
+    label {
+        display: block;
+        margin: 10px 0;
+    }
+    
+    input,
+    button {
+        width: 90%;
+        padding: 10px;
+        margin: 5px 0;
+    }
+    
+    button {
+        background-color: #130b46;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    
+    table,
+    th,
+    td {
+        border: 1px solid #ccc;
+    }
+    
+    th,
+    td {
+        padding: 8px;
+    }
+    
+    .result {
+        margin-top: 20px;
+    }
+</style>
+
+<body>
+    <div class="container">
+        <h1>Round Robin Scheduling</h1>
+        <label for="numProcesses">Enter Total Number of Processes:</label>
+        <input type="number" id="numProcesses">
+        <label for="timeQuantum">Enter Time Quantum:</label>
+        <input type="number" id="timeQuantum">
+        <button id="calculateButton">Calculate</button>
+        <div class="result">
+            <h2>Results</h2>
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        <th>#Process ID</th>
+                        <th>Arrival Time</th>
+                        <th>Burst Time</th>
+                        <th>Waiting Time</th>
+                        <th>Turnaround Time</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <p>Average Waiting Time: <span id="avgWaitingTime"></span> (min)</p>
+            <p>Average Turnaround Time: <span id="avgTurnaroundTime"></span> (min)</p>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const numProcessesField = document.getElementById('numProcesses');
+            const timeQuantumField = document.getElementById('timeQuantum');
+            const calculateButton = document.getElementById('calculateButton');
+            const resultTable = document.querySelector('#resultTable tbody');
+            const avgWaitingTime = document.getElementById('avgWaitingTime');
+            const avgTurnaroundTime = document.getElementById('avgTurnaroundTime');
+
+            calculateButton.addEventListener('click', calculateRoundRobin);
+
+            function calculateRoundRobin() {
+                // Clear existing rows from the table
+                resultTable.innerHTML = '';
+                avgWaitingTime.textContent = '';
+                avgTurnaroundTime.textContent = '';
+
+                const n = parseInt(numProcessesField.value);
+                const timeQuantum = parseInt(timeQuantumField.value);
+                const processes = [];
+
+                // Collect input data
+                for (let i = 0; i < n; i++) {
+                    const arrivalTime = parseInt(prompt(`Enter Arrival Time for Process ${i + 1}:`));
+                    const burstTime = parseInt(prompt(`Enter Burst Time for Process ${i + 1}:`));
+                    processes.push({
+                        pid: i + 1,
+                        arrivalTime: arrivalTime,
+                        burstTime: burstTime,
+                        remainingTime: burstTime,
+                        waitingTime: 0,
+                        turnaroundTime: 0,
+                    });
+                }
+
+                let currentTime = 0;
+                let totalWaitingTime = 0;
+                let totalTurnaroundTime = 0;
+                let completedProcesses = 0;
+                const queue = [...processes]; // Create a copy of processes
+
+                while (completedProcesses < n) {
+                    const process = queue.shift();
+                    if (process.arrivalTime <= currentTime) {
+                        const executionTime = Math.min(timeQuantum, process.remainingTime);
+                        process.remainingTime -= executionTime;
+                        currentTime += executionTime;
+
+                        if (process.remainingTime === 0) {
+                            process.turnaroundTime = currentTime - process.arrivalTime;
+                            process.waitingTime = process.turnaroundTime - process.burstTime;
+                            totalWaitingTime += process.waitingTime;
+                            totalTurnaroundTime += process.turnaroundTime;
+                            completedProcesses++;
+                        } else {
+                            // Process needs to wait, so add it back to the end of the queue
+                            queue.push(process);
+                        }
+                    } else {
+                        // Process hasn't arrived yet, add it back to the end of the queue
+                        queue.push(process);
+                        currentTime++;
+                    }
+                }
+
+                // Update the result table
+                for (const process of processes) {
+                    const row = resultTable.insertRow(-1);
+                    const cell1 = row.insertCell(0);
+                    const cell2 = row.insertCell(1);
+                    const cell3 = row.insertCell(2);
+                    const cell4 = row.insertCell(3);
+                    const cell5 = row.insertCell(4);
+
+                    cell1.textContent = `P[${process.pid}]`;
+                    cell2.textContent = process.arrivalTime;
+                    cell3.textContent = process.burstTime;
+                    cell4.textContent = process.waitingTime;
+                    cell5.textContent = process.turnaroundTime;
+                }
+
+                avgWaitingTime.textContent = (totalWaitingTime / n).toFixed(2);
+                avgTurnaroundTime.textContent = (totalTurnaroundTime / n).toFixed(2);
+            }
+        });
+    </script>
+
+</body>
+
+</html>

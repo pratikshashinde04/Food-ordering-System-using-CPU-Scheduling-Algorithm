@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #04040c;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .main-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 30px;
+    }
+    
+    .title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+    
+    .input-container {
+        text-align: left;
+    }
+    
+    label {
+        display: block;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    
+    input {
+        width: 55%;
+        padding: 6px 78px;
+        margin-bottom: 10px;
+        text-align: center;
+        margin-left: 79px;
+    }
+    
+    button {
+        background-color: #152352;
+        color: #fff;
+        border: none;
+        padding: 10px 178px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-left: 178px;
+    }
+    
+    .result-container {
+        margin-top: 20px;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    table,
+    th,
+    td {
+        border: 1px solid #ccc;
+    }
+    
+    th,
+    td {
+        padding: 8px;
+        text-align: center;
+    }
+    
+    th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+    }
+</style>
+
+<body>
+    <div class="main-container">
+        <h1 class="title">First Come First Serve Scheduling Food Ordering System</h1>
+        <div class="input-container">
+            <label for="numberOfOrders">Enter the Total Number of Orders:</label>
+            <input type="text" id="numberOfOrders" placeholder="Enter a number">
+            <br>
+            <button id="calculateButton">Calculate</button>
+        </div>
+        <div class="result-container">
+            <table id="resultTable">
+                <!-- Table headers and results will be added dynamically -->
+            </table>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const numberOfOrdersField = document.getElementById('numberOfOrders');
+            const calculateButton = document.getElementById('calculateButton');
+            const resultTable = document.getElementById('resultTable');
+
+            calculateButton.addEventListener('click', executeFCFS);
+
+            function executeFCFS() {
+                const numberOfOrders = parseInt(numberOfOrdersField.value);
+                if (isNaN(numberOfOrders) || numberOfOrders < 1) {
+                    alert('Please enter a valid number of orders.');
+                    return;
+                }
+
+                const processes = [];
+
+                for (let i = 0; i < numberOfOrders; i++) {
+                    const arrivalTime = parseInt(prompt(`Enter Arrival Time of Order ${i + 1}:`));
+                    const burstTime = parseInt(prompt(`Enter Cooking Time of Order ${i + 1} (in minutes):`));
+
+                    if (isNaN(arrivalTime) || isNaN(burstTime)) {
+                        alert('Please enter valid numeric values for arrival and burst times.');
+                        return;
+                    }
+
+                    processes.push({
+                        pid: i + 1,
+                        arrivalTime,
+                        burstTime,
+                        completionTime: -1,
+                        turnaroundTime: -1,
+                        waitingTime: -1,
+                    });
+                }
+
+                // Sort processes by arrival time initially
+                processes.sort((a, b) => a.arrivalTime - b.arrivalTime);
+
+                let currentTime = 0;
+                let totalTurnaroundTime = 0;
+                let totalWaitingTime = 0;
+
+                // Clear the table before adding new data
+                resultTable.innerHTML = '';
+
+                // Create table headers
+                const headerRow = document.createElement('tr');
+                const headers = ['Process', 'Arrival Time', 'Burst Time', 'Completion Time', 'Turnaround Time', 'Waiting Time'];
+                headers.forEach(headerText => {
+                    const th = document.createElement('th');
+                    th.textContent = headerText;
+                    headerRow.appendChild(th);
+                });
+                resultTable.appendChild(headerRow);
+
+                // Create table rows with data
+                processes.forEach(process => {
+                    const row = document.createElement('tr');
+
+                    if (process.arrivalTime > currentTime) {
+                        currentTime = process.arrivalTime;
+                    }
+
+                    process.completionTime = currentTime + process.burstTime;
+                    process.turnaroundTime = process.completionTime - process.arrivalTime;
+                    process.waitingTime = process.turnaroundTime - process.burstTime;
+
+                    totalTurnaroundTime += process.turnaroundTime;
+                    totalWaitingTime += process.waitingTime;
+
+                    const data = [
+                        `P${process.pid}`,
+                        process.arrivalTime,
+                        process.burstTime,
+                        process.completionTime,
+                        process.turnaroundTime,
+                        process.waitingTime,
+                    ];
+
+                    data.forEach(value => {
+                        const cell = document.createElement('td');
+                        cell.textContent = value;
+                        row.appendChild(cell);
+                    });
+
+                    resultTable.appendChild(row);
+                    currentTime = process.completionTime;
+                });
+
+                const averageWaitingTime = totalWaitingTime / numberOfOrders;
+                const averageTurnaroundTime = totalTurnaroundTime / numberOfOrders;
+
+                // Create a row for the averages
+                const avgRow = document.createElement('tr');
+                const avgData = [
+                    'Average',
+                    '',
+                    '',
+                    '',
+                    averageTurnaroundTime.toFixed(2),
+                    averageWaitingTime.toFixed(2),
+                ];
+
+                avgData.forEach(value => {
+                    const cell = document.createElement('td');
+                    cell.textContent = value;
+                    avgRow.appendChild(cell);
+                });
+
+                resultTable.appendChild(avgRow);
+            }
+        });
+    </script>
+</body>
+
+</html>

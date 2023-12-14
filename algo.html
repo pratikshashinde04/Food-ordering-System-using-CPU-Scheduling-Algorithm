@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+    <title>Document</title>
+</head>
+<style>
+    body {
+        margin: 0px;
+        padding: 0px;
+    }
+    
+    .navbar {
+        /* text-align: center; */
+        /* padding: 20px; */
+        text-decoration: none;
+        background: rgb(4, 5, 12);
+        padding: 2px 0px 5px 94px !important;
+        width: 100% !important;
+    }
+    
+    #name {
+        display: inline-block;
+        text-align: right;
+        color: #e9ce57;
+        font-size: 38px;
+        font-style: italic;
+        text-shadow: 0 0 black;
+        font-weight: bold;
+    }
+    
+    #n1 {
+        text-align: center;
+        padding: 0px 30px 0px 610px;
+        text-decoration: underline;
+        font-size: 32px;
+        text-decoration-color: orange;
+        text-decoration-thickness: revert;
+        color: rgb(251, 250, 248);
+        font-weight: bold;
+        font-family: sans-serif;
+    }
+    
+    #n1:hover {
+        color: rgb(224, 190, 54);
+    }
+    
+    #n2 {
+        text-align: center;
+        padding: 0px 30px 0px 40px;
+        text-decoration: none;
+        font-size: 30px;
+        color: rgb(239, 238, 237);
+        font-weight: bold;
+        font-family: sans-serif;
+    }
+    
+    #n3 {
+        text-align: center;
+        padding: 0px 30px 0px 40px;
+        text-decoration: none;
+        font-size: 30px;
+        color: rgb(238, 236, 235);
+        font-weight: bold;
+        font-family: sans-serif;
+    }
+    
+    h2 {
+        text-align: center;
+        font-size: 39px;
+        margin-top: 36px;
+        margin-bottom: 17px;
+        position: relative;
+        color: #0d0703;
+        font-weight: 600;
+    }
+    
+    h2::after {
+        content: '';
+        position: absolute;
+        height: 3px;
+        width: 200px;
+        background: #e73939cc;
+        top: 59px;
+        margin: auto;
+        margin-bottom: 30px;
+        left: 0;
+        right: 0;
+        border-radius: 10px;
+    }
+    
+    p {
+        text-align: justify;
+        color: black;
+        margin-top: 20px;
+        font-weight: 500;
+        font-size: 17px;
+        text-decoration: none;
+        margin-bottom: 30px;
+    }
+    
+    #links {
+        background: #1a2254;
+        padding: 12px;
+        text-align: center;
+        width: 100x;
+        color: #fbf6f6;
+        text-decoration: none;
+        font-size: 21px;
+        font-weight: 500;
+        border-radius: 10px;
+        margin-left: 118px;
+        margin-bottom: 30px;
+    }
+    
+    img {
+        margin-top: 25px;
+    }
+    
+    footer {
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        padding: 20px 0;
+        margin-top: 30px;
+    }
+    
+    .footer-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-left: 20%;
+    }
+    
+    .footer-links {
+        list-style: none;
+        padding: 0;
+        margin-right: 30%;
+    }
+    
+    .footer-links li {
+        margin: 5px 0;
+    }
+    
+    .footer-links a {
+        text-decoration: none;
+        color: #fff;
+    }
+    
+    #para {
+        color: white;
+    }
+</style>
+
+<body>
+    <nav class="navbar">
+
+        <p id="name">Foodies</p>
+        <a href="#" id="n1">Home</a>
+        <a href="#" id="n2">Menu</a>
+        <a href="#" id="n3">Contact</a>
+
+        </div>
+    </nav>
+    <div class="container">
+        <h2>CPU Scheduling Algorithms</h2>
+        <p>CPU scheduling algorithms are used by operating systems to manage the execution of processes (or threads) on a computer's central processing unit (CPU). The goal of CPU scheduling is to efficiently allocate CPU time to various processes in a way
+            that optimizes system performance and ensures fairness. Several CPU scheduling algorithms exist, and their suitability depends on the specific requirements and goals of the operating system. Some of the common CPU scheduling algorithms include:</p>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="thumbnail">
+                    <img src="https://tse1.mm.bing.net/th?id=OIP.ECqMdT_65CUpon-UFCmLKQHaEK&pid=Api&P=0&h=180" alt="Lights" style="width:100%">
+                    <div class="caption">
+                        <p>This is a simple scheduling algorithm where the first process that arrives is the first to be executed. It can lead to poor performance in terms of response time, especially if a long-running process arrives first and other shorter
+                            tasks are queued behind it. It is simplest scheduling algorithm.</p>
+                        <a href="fcfs.html" id="links">Check </a>
+                    </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="thumbnail">
+                    <img src="https://i.ytimg.com/vi/Ma-FfkFdkng/maxresdefault.jpg" alt="Nature" style="width:100%">
+                    <div class="caption">
+                        <p>Processes are assigned priorities, and the CPU is allocated to the process with the highest priority. This can be either preemptive or non-preemptive. Preemptive priority scheduling allows higher-priority processes to interrupt
+                            lower-priority processes if necessary.</p>
+                        <a href="priority.html" id="links">Check </a>
+
+                    </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="thumbnail">
+                    <img src="https://files.codingninjas.in/article_images/custom-upload-1673089320.png" alt="Fjords" style="width:100%">
+                    <div class="caption">
+                        <p>SRTF is a preemptive CPU scheduling algorithm that selects the process with the shortest remaining execution time to run next. It minimizes waiting times and provides fast response to short tasks but relies on accurate knowledge
+                            of process execution times.</p>
+                        <a href="srjf.html" id="links">Check </a>
+
+                    </div>
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="thumbnail">
+                        <img src="https://files.codingninjas.in/article_images/custom-upload-1671613158.webp" alt="Lights" style="width:100%">
+                        <div class="caption">
+                            <p>Round Robin (RR) is a widely used preemptive CPU scheduling algorithm. In RR, each process is assigned a fixed time quantum, and they take turns executing in a cyclic order. This approach ensures fairness by preventing any
+                                single process from monopolizing the CPU. </p>
+                            <a href="roundr.html" id="links">Check </a>
+                        </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="thumbnail">
+                        <img src="https://i.ytimg.com/vi/FXaQdBtHOHo/maxresdefault.jpg" alt="Nature" style="width:100%">
+                        <div class="caption">
+                            <p>SJF is a non-preemptive or preemptive CPU scheduling algorithm that prioritizes the execution of the process with the shortest expected execution time. In the non-preemptive version, the selected process runs to completion
+                                before another is scheduled. </p>
+                            <a href="sjf.html" id="links">Check </a>
+
+                        </div>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-info">
+                <h3>Hotel Foodies</h3>
+                <p id="para">123 Main Street, Pune, India</p>
+                <p id="para">Phone: (123) 456-7890</p>
+                <p id="para">Email: foodies@gmail.com</p>
+            </div>
+            <ul class="footer-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Menu</a></li>
+
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+    </footer>
+</body>
+
+</html>

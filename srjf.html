@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRTF Scheduling Simulation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        background-color: black;
+    }
+    
+    .container {
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        text-align: center;
+    }
+    
+    h1 {
+        font-size: 24px;
+        font-weight: bold;
+    }
+    
+    .input-container {
+        margin: 20px 0;
+    }
+    
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    
+    input {
+        width: 350px;
+        padding: 5px;
+        margin-right: 10px;
+    }
+    
+    button {
+        background-color: #111f79;
+        color: white;
+        border: none;
+        padding: 11px 152px;
+        cursor: pointer;
+        margin-top: 16px;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        border: 1px solid #ccc;
+    }
+    
+    th,
+    td {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #ccc;
+    }
+    
+    th {
+        background-color: #f2f2f2;
+    }
+    
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<body>
+    <div class="container">
+        <h1>SRTF Scheduling Simulation</h1>
+        <div class="input-container">
+            <label for="numberOfProcesses">Enter the Total Number of Processes:</label>
+            <input type="text" id="numberOfProcesses" />
+            <br>
+            <button id="simulateButton">Simulate</button>
+        </div>
+        <table id="resultTable">
+            <!-- Table headers and results will be added dynamically -->
+        </table>
+
+        <p>Average Waiting Time: <span id="avgWT"></span> (min)</p>
+        <p>Average Turnaround Time: <span id="avgTAT"></span> (min)</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const numberOfProcessesField = document.getElementById('numberOfProcesses');
+            const simulateButton = document.getElementById('simulateButton');
+            const resultTable = document.getElementById('resultTable');
+            const avgTAT = document.getElementById('avgTAT');
+            const avgWT = document.getElementById('avgWT');
+
+            simulateButton.addEventListener('click', executeSRTF);
+
+            function executeSRTF() {
+                const numberOfProcesses = parseInt(numberOfProcessesField.value);
+                if (isNaN(numberOfProcesses) || numberOfProcesses < 1) {
+                    alert('Please enter a valid number of processes.');
+                    return;
+                }
+
+                const processes = [];
+
+                for (let i = 0; i < numberOfProcesses; i++) {
+                    const arrivalTime = parseInt(prompt(`Enter Arrival Time of Process ${i + 1}:`));
+                    const burstTime = parseInt(prompt(`Enter Burst Time of Process ${i + 1}:`));
+
+                    if (isNaN(arrivalTime) || isNaN(burstTime)) {
+                        alert('Please enter valid numeric values for arrival and burst times.');
+                        return;
+                    }
+
+                    processes.push({
+                        pid: i + 1,
+                        arrivalTime,
+                        burstTime,
+                        remainingTime: burstTime,
+                        startTime: -1,
+                        completionTime: -1,
+                        turnaroundTime: -1,
+                        waitingTime: -1,
+                    });
+                }
+
+                // Sort processes by arrival time initially
+                processes.sort((a, b) => a.arrivalTime - b.arrivalTime);
+
+                const resultProcesses = [];
+                let totalWaitingTime = 0;
+                let totalTurnaroundTime = 0;
+
+                let currentTime = 0;
+                let completed = 0;
+                let activeProcess = null;
+
+                while (completed < numberOfProcesses) {
+                    // Find the process with the shortest remaining time
+                    let minRemainingTime = Number.MAX_VALUE;
+                    let selectedProcess = -1;
+
+                    for (let i = 0; i < numberOfProcesses; i++) {
+                        const process = processes[i];
+
+                        if (process.arrivalTime <= currentTime && process.remainingTime < minRemainingTime && process.remainingTime > 0) {
+                            minRemainingTime = process.remainingTime;
+                            selectedProcess = i;
+                        }
+                    }
+
+                    if (selectedProcess === -1) {
+                        currentTime++;
+                    } else {
+                        if (activeProcess !== processes[selectedProcess]) {
+                            // Process switch
+                            activeProcess = processes[selectedProcess];
+                            activeProcess.startTime = currentTime;
+                        }
+
+                        activeProcess.remainingTime--;
+
+                        if (activeProcess.remainingTime === 0) {
+                            activeProcess.completionTime = currentTime + 1;
+                            activeProcess.turnaroundTime = activeProcess.completionTime - activeProcess.arrivalTime;
+                            activeProcess.waitingTime = activeProcess.turnaroundTime - activeProcess.burstTime;
+
+                            totalTurnaroundTime += activeProcess.turnaroundTime;
+                            totalWaitingTime += activeProcess.waitingTime;
+
+                            completed++;
+                            activeProcess = null;
+                        }
+
+                        currentTime++;
+                        resultProcesses.push(Object.assign({}, processes[selectedProcess])); // Clone the process for the result
+                    }
+                }
+
+                // Now, the 'resultProcesses' array contains the results of SRTF scheduling for each process.
+                // You can update the table and display the results as shown in the previous example.
+                updateTable(resultProcesses);
+                calculateAndDisplayAverage(totalTurnaroundTime, totalWaitingTime, numberOfProcesses);
+            }
+
+            function updateTable(processes) {
+                // Clear the table before adding new data
+                resultTable.innerHTML = '';
+
+                // Create table headers
+                const headerRow = document.createElement('tr');
+                const headers = ['Process', 'Arrival Time', 'Burst Time', 'Start Time', 'Completion Time', 'Turnaround Time', 'Waiting Time'];
+                headers.forEach(headerText => {
+                    const th = document.createElement('th');
+                    th.textContent = headerText;
+                    headerRow.appendChild(th);
+                });
+                resultTable.appendChild(headerRow);
+
+                // Create table rows with data
+                processes.forEach(process => {
+                    const row = document.createElement('tr');
+                    const data = [
+                        `P${process.pid}`,
+                        process.arrivalTime,
+                        process.burstTime,
+                        process.startTime,
+                        process.completionTime,
+                        process.turnaroundTime,
+                        process.waitingTime,
+                    ];
+
+                    data.forEach(value => {
+                        const cell = document.createElement('td');
+                        cell.textContent = value;
+                        row.appendChild(cell);
+                    });
+
+                    resultTable.appendChild(row);
+                });
+            }
+
+            function calculateAndDisplayAverage(totalTurnaroundTime, totalWaitingTime, n) {
+                const avgTATValue = (totalTurnaroundTime / n).toFixed(2);
+                const avgWTValue = (totalWaitingTime / n).toFixed(2);
+
+                avgTAT.textContent = avgTATValue;
+                avgWT.textContent = avgWTValue;
+            }
+        });
+    </script>
+
+</body>
+
+</html>

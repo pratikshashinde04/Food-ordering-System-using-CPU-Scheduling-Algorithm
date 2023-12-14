@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        background-color: black;
+    }
+    
+    .container {
+        max-width: 750px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    h1 {
+        font-size: 24px;
+    }
+    
+    label {
+        display: block;
+        margin: 10px 0;
+    }
+    
+    input,
+    button {
+        width: 90%;
+        padding: 10px;
+        margin: 5px 0;
+    }
+    
+    button {
+        background-color: #130b46;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    
+    table,
+    th,
+    td {
+        border: 1px solid #ccc;
+    }
+    
+    th,
+    td {
+        padding: 8px;
+    }
+    
+    .result {
+        margin-top: 20px;
+    }
+</style>
+
+<body>
+    <div class="container">
+        <h1>Priority Scheduling Food Ordering System</h1>
+        <label for="numOrders">Enter Total Number of Orders:</label>
+        <input type="number" id="numOrders">
+        <button id="calculateButton">Calculate</button>
+        <div class="result">
+            <h2>Results</h2>
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        <th>#Order ID</th>
+                        <th>Cooking Time</th>
+                        <th>Waiting Time</th>
+                        <th>Turnaround Time</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <p>Average Waiting Time: <span id="avgWaitingTime"></span> (min)</p>
+            <p>Average Turnaround Time: <span id="avgTurnaroundTime"></span> (min)</p>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const numOrdersField = document.getElementById('numOrders');
+            const calculateButton = document.getElementById('calculateButton');
+            const resultTable = document.querySelector('#resultTable tbody');
+            const avgWaitingTime = document.getElementById('avgWaitingTime');
+            const avgTurnaroundTime = document.getElementById('avgTurnaroundTime');
+
+            calculateButton.addEventListener('click', calculatePriorityScheduling);
+
+            function calculatePriorityScheduling() {
+                // Clear existing rows from the table
+                resultTable.innerHTML = '';
+                avgWaitingTime.textContent = '';
+                avgTurnaroundTime.textContent = '';
+
+                const n = parseInt(numOrdersField.value);
+                const processes = [];
+
+                // Collect input data
+                for (let i = 0; i < n; i++) {
+                    const cookingTime = parseInt(prompt(`Enter Cooking Time for Order ${i + 1}:`));
+                    const priority = parseInt(prompt(`Enter Priority for Order ${i + 1}:`));
+                    processes.push({
+                        pid: i + 1,
+                        burstTime: cookingTime,
+                        priority: priority,
+                        waitingTime: 0,
+                        turnaroundTime: 0,
+                    });
+                }
+
+                // Sorting by priority in ascending order
+                processes.sort((a, b) => a.priority - b.priority);
+                let totalWaitingTime = 0;
+                let totalTurnaroundTime = 0;
+                let currentTime = 0; // Track the current time
+
+                // Calculate waiting time and populate the table
+                for (let i = 0; i < n; i++) {
+                    processes[i].waitingTime = currentTime;
+                    totalWaitingTime += processes[i].waitingTime;
+                    currentTime += processes[i].burstTime;
+                    processes[i].turnaroundTime = processes[i].waitingTime + processes[i].burstTime;
+                    totalTurnaroundTime += processes[i].turnaroundTime;
+
+                    const row = resultTable.insertRow(-1);
+                    const cell1 = row.insertCell(0);
+                    const cell2 = row.insertCell(1);
+                    const cell3 = row.insertCell(2);
+                    const cell4 = row.insertCell(3);
+
+                    cell1.textContent = `O[${processes[i].pid}]`;
+                    cell2.textContent = processes[i].burstTime;
+                    cell3.textContent = processes[i].waitingTime;
+                    cell4.textContent = processes[i].turnaroundTime;
+                }
+
+                // Calculate average waiting time and average turnaround time
+                avgWaitingTime.textContent = (totalWaitingTime / n).toFixed(2);
+                avgTurnaroundTime.textContent = (totalTurnaroundTime / n).toFixed(2);
+            }
+        });
+    </script>
+</body>
+
+</html>
